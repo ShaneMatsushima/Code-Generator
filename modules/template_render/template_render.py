@@ -6,6 +6,8 @@ STREAMLIT_VERSION = "streamlit==1.41.1"
 
 """
     Creates a Streamlit app file in the specified directory based on user inputs.
+    Creates requirements.txt file for project.
+    Creates run_app script for project.
 
     Parameters:
         dir (str): Directory where the app file should be created.
