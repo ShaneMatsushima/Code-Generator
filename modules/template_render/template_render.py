@@ -1,8 +1,10 @@
 from jinja2 import Template
 import os
 
-# ========= Project Versions ============
+# ========= Python Project Versions ============
 STREAMLIT_VERSION = "streamlit==1.41.1"
+FLASK_VERSION = "Flask==3.1.0"
+# ==============================================
 
 """
     Creates a Streamlit app file in the specified directory based on user inputs.
@@ -18,7 +20,7 @@ STREAMLIT_VERSION = "streamlit==1.41.1"
         sidebar_options (list): List of sidebar options.
         show_chart (bool): Whether to include a chart in the app.
         show_data (bool): Whether to include a data table in the app.
-    """
+"""
 def streamlit_create(dir:str, app_name:str, app_title:str, app_header:str, app_desc:str, 
                      sidebar_options:list, show_chart=False, show_data=False):
     # Ensure the directory exists
@@ -97,6 +99,90 @@ def streamlit_create(dir:str, app_name:str, app_title:str, app_header:str, app_d
         os.chmod(batch_path, 0o755)
 
     print(f"Run App Script created successfully")
+
+"""
+    Creates a Flask app file in the specified directory based on user inputs.
+    Creates requirements.txt file for project.
+    Creates run_app script for project.
+
+    Parameters:
+        dir (str): Directory where the app file should be created.
+        endpoint_count (int): number of endpoints for the project to create
+"""
+def flask_create(dir:str, endpoint_count:int):
+    # Ensure the directory exists
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+    file_str = 'from flask import Flask, jsonify, request \n \n'
+
+    file_str += 'app = Flask(__name__)'
+
+    if endpoint_count is not None:
+        for endpoint in range(endpoint_count):
+            file_str += f'\n@app.route("//", methods=["GET", "POST"]) '
+            file_str += f'\ndef name{endpoint}():\n \t pass \n' 
+    else:
+        file_str += '\n@app.route("/", methods=["GET", "POST"]) \n'
+        file_str += 'def home(): \n \t pass \n'
+
+    file_str += '\n \n'
+    file_str += "if __name__ == '__main__': \n"
+    file_str += '\tapp.run(debug=True)'
+
+    # Create Flask main file
+    file_dir = os.path.join(dir, "app.py")
+    with open(file_dir, "w") as file:
+        file.write(file_str)
+        print(f"Flask App created successfully in {dir}")
+
+    # Create requirements.txt
+    requ_file = "requirements.txt"
+    requ_path = os.path.join(dir, requ_file)
+    with open(requ_path, "w") as file:
+        file.write(FLASK_VERSION)
+    
+    print(f"Requirements.txt created succcessfully")
+
+    # Create Batch or Shell script to run flask api
+    FLASK_BATCH = f"""@echo off
+    cd {dir}
+    echo -------------
+    echo Running API Server .....
+    echo -------------
+    :: run flask API
+    flask --app app run 
+    """
+
+    FLASK_SHELL = f"""#!/bin/bash
+    echo -------------
+    echo Running API Server .....
+    echo -------------
+    # run flask API
+    flask --app api run
+    """
+    
+    # Determine file type based on OS
+    script_file = "run_app.bat" if os.name == "nt" else "run_app.sh"
+    script_path = os.path.join(dir, script_file)
+
+    # Choose the correct script content based on OS
+    os_write = FLASK_BATCH if os.name == "nt" else FLASK_SHELL
+
+    # Write the script to the file
+    with open(script_path, "w") as script_file:
+        script_file.write(os_write)
+
+    # If shell script, make it executable
+    if os.name != "nt":
+        os.chmod(batch_path, 0o755)
+    
+    print(f"Run App Script created successfully")
+    
+
+
+    
+
         
 
 
