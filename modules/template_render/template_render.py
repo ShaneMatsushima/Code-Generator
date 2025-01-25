@@ -131,7 +131,7 @@ def flask_create(dir:str, endpoint_count:int):
     file_str += '\tapp.run(debug=True)'
 
     # Create Flask main file
-    file_dir = os.path.join(dir, "app.py")
+    file_dir = os.path.join(dir, "api.py")
     with open(file_dir, "w") as file:
         file.write(file_str)
         print(f"Flask App created successfully in {dir}")
@@ -151,7 +151,7 @@ def flask_create(dir:str, endpoint_count:int):
     echo Running API Server .....
     echo -------------
     :: run flask API
-    flask --app app run 
+    flask --app api run 
     """
 
     FLASK_SHELL = f"""#!/bin/bash
@@ -178,6 +178,75 @@ def flask_create(dir:str, endpoint_count:int):
         os.chmod(batch_path, 0o755)
     
     print(f"Run App Script created successfully")
+
+
+"""
+    Creates a python file in the specified directory based on user inputs.
+    Creates requirements.txt file for project.
+    Creates run_app script for project.
+
+    Parameters:
+        dir (str): Directory where the app file should be created.
+        proj_name (str): Name of file or project to create
+"""
+def regular_python_create(dir:str, proj_name:str):
+    # Ensure the directory exists
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    
+    file_str = "\n \n \nif __name__ == '__main__': \n \tpass"
+
+    # Create Python main file
+    file_name = f"{proj_name.lower().replace(' ', '_')}.py"
+    file_dir = os.path.join(dir, file_name)
+    with open(file_dir, "w") as file:
+        file.write(file_str)
+        print(f"Python script created successfully in {dir}")
+    
+    # Create requirements.txt
+    requ_file = "requirements.txt"
+    requ_path = os.path.join(dir, requ_file)
+    with open(requ_path, "w") as file:
+        file.write('# Place requirements here')
+    
+    print(f"Requirements.txt created succcessfully")
+
+    PYTHON_BATCH = f"""@echo off
+    cd {dir}
+    echo -------------
+    echo Running Python Script .....
+    echo -------------
+    python {file_name}
+    """
+
+    PYTHON_SHELL = f"""#!/bin/bash
+    echo -------------
+    echo Running Python Script .....
+    echo -------------
+    python {file_name}
+    """
+
+    # Determine file type based on OS
+    script_file = "run_app.bat" if os.name == "nt" else "run_app.sh"
+    script_path = os.path.join(dir, script_file)
+
+    # Choose the correct script content based on OS
+    os_write = PYTHON_BATCH if os.name == "nt" else PYTHON_SHELL
+
+    # Write the script to the file
+    with open(script_path, "w") as script_file:
+        script_file.write(os_write)
+
+    # If shell script, make it executable
+    if os.name != "nt":
+        os.chmod(batch_path, 0o755)
+    
+    print(f"Run App Script created successfully")
+
+
+    
+
+
     
 
 

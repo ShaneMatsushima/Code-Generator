@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-from modules.template_render.template_render import streamlit_create, flask_create
+from modules.template_render.template_render import streamlit_create, flask_create, regular_python_create
 
 class ProjectSetupApp:
     def __init__(self, root):
@@ -126,7 +126,12 @@ class ProjectSetupApp:
             flask_create(directory, endpoint_count)
             messagebox.showinfo("Success", f"Flask API project '{project_name}' create successfully!")
         
+        if language == "Python" and self.python_project_type_var.get() == "Regular Python Project":
+            # Create regular Python project
+            regular_python_create(directory, project_name)
+            messagebox.showinfo("Success", f"Regular Python project '{project_name}' created successfully!")
         
+
 
 
 # Run the app

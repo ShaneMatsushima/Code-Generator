@@ -1,0 +1,6 @@
+TODO
+- confine shell/batch creation to a function
+- add environment creation if selected
+- start java integration
+- start c integration
+- start c++ integratoin
