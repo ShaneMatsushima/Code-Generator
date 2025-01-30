@@ -1,5 +1,6 @@
 from jinja2 import Template
 import os
+import shutil
 
 # ========= Python Project Versions ============
 STREAMLIT_VERSION = "streamlit==1.41.1"
@@ -242,6 +243,169 @@ def regular_python_create(dir:str, proj_name:str):
         os.chmod(batch_path, 0o755)
     
     print(f"Run App Script created successfully")
+
+"""
+    Creates a Java project in the specified directory based on user inputs.
+    Creates README.md file for project.
+    Creates pom.xml for project.
+
+    Parameters:
+        dir (str): Directory where the app file should be created.
+        proj_name (str): Name of file or project to create
+        test (bool): Flag for unti testing creation
+"""
+def java_create(dir:str, proj_name:str, test_flag:bool):
+
+    # == Init Project Creation ==
+
+    # restructure proj_name
+    proj_name = proj_name.lower().replace(' ', '_')
+
+    # create paths for files
+    com_path = "src/main/java/com"
+
+    main_file_path = com_path + f"/{proj_name}"
+    dir_path = os.path.join(dir, main_file_path)
+    os.makedirs(dir_path, exist_ok=True)
+
+    utils_path = com_path + "/utils"
+    dir_path = os.path.join(dir, utils_path)
+    os.makedirs(dir_path, exist_ok=True)
+
+    service_path = com_path + "/services"
+    dir_path = os.path.join(dir, service_path)
+    os.makedirs(dir_path, exist_ok=True)
+
+    # string to place in file
+
+    # -- MAIN --
+    main_str = "package com.example;\n\n"
+    main_str += "import com.example.services.CalculatorService;\n\n"
+    main_str += "public class Main {\n"
+    main_str += "\tpublic static void main(String[] args) {\n"
+    main_str += "\t\tSystem.out.println(\"Welcome to the Java Starter Project\");"
+    main_str += "\t\tCalculatorService calculator = new CalculatorService();\n"
+    main_str += "\t\tint sum = calculator.add(5,10);\n"
+    main_str += "\t\tSystem.out.println(\"Sum: \" + sum);\n"
+    main_str += "\t}\n"
+    main_str += "}\n"
+
+    # -- StringUtils.java --
+    utils_str = "package com.example.utils;\n\n"
+    utils_str += "public class StringUtils {\n"
+    utils_str += "\tpublic static boolean isEmpty(String str) {\n"
+    utils_str += "\t\treturn str == null || str.isEmpty();\n"
+    utils_str += "\t}\n"
+    utils_str += "}\n"
+
+    # -- CalculatorService.java --
+    calc_serv_str = "package com.example.services;\n\n"
+    calc_serv_str += "public class CalculatorService {\n"
+    calc_serv_str += "\tpublic int add(int a, int b) {\n"
+    calc_serv_str += "\t\treturn a + b;\n"
+    calc_serv_str += "\t}\n"
+    calc_serv_str += "}\n"
+
+    # file creation and writing
+    #create main file
+    main_path = os.path.join(dir, main_file_path)
+    main_path = os.path.join(main_path, f"{proj_name}.java")
+    with open(main_path, "w") as file:
+        file.write(main_str)
+
+    utils_path = os.path.join(dir, utils_path)
+    utils_path = os.path.join(utils_path, "StringUtils.java")
+    with open(utils_path, "w") as file:
+        file.write(utils_str)
+    
+    service_path = os.path.join(dir, service_path)
+    service_path = os.path.join(service_path, "CalculatorService.java")
+    with open(service_path, "w") as file:
+        file.write(calc_serv_str)
+
+    # pom.xml creation
+    pom_path = os.path.join(dir, "pom.xml")
+    script_dir = os.path.dirname(__file__)
+    template_path = os.path.join(script_dir, "..", "..", "templates", "pom.template")
+    template_path = os.path.abspath(template_path)
+    copy_template(template_path, pom_path)
+
+    # Create ReadMe file
+    readme_path = os.path.join(dir, "README.md")
+    template_path = os.path.join(script_dir, "..", "..", "templates", "javaReadMe.template")
+    template_path = os.path.abspath(template_path)
+    copy_template(template_path, readme_path)
+
+    # == Test Unit Creation ==
+    if test_flag:
+        test_path = "test/java/com/" + f"{proj_name}"
+        test_dir_path = os.path.join(dir, test_path)
+
+        # -- Main Test --
+        main_test_str = "package com.example;\n\n"
+        main_test_str += "import org.junit.jupiter.api.Test;\n"
+        main_test_str += "import static org.junit.jupiter.api.Assertions.*;\n\n"
+        main_test_str += "public class MainTest {\n"
+        main_test_str += "\t@Test\n"
+        main_test_str += "\tpublic void testMain() {\n"
+        main_test_str += "\t\tassertTrue(true)\n;"
+        main_test_str += "\t}\n"
+        main_test_str += "}\n"
+
+        # -- Calculator Test --
+        calc_test_str = "package com.example.services;\n\n"
+        calc_test_str += "import org.junit.jupiter.api.Test;\n"
+        calc_test_str += "import static org.junit.jupiter.api.Assertions.*;\n\n"
+        calc_test_str += "public class CalculatorServiceTest {\n"
+        calc_test_str += "\t@Test\n"
+        calc_test_str += "\tpublic void testAdd() {\n"
+        calc_test_str += "\t\tCalculatorService calculator = new CalculatorService();"
+        calc_test_str += "\t\tassertEquals(15, calculator.add(10,5));"
+        calc_test_str += "\t}\n"
+        calc_test_str += "}\n"
+
+
+
+        os.makedirs(test_dir_path, exist_ok=True)
+        main_test_path = os.path.join(test_dir_path, f"{proj_name}Test.java")
+        with open(main_test_path, "w") as file:
+            file.write(main_test_str)
+
+        test_service_path = os.path.join(test_dir_path, "services")
+        os.makedirs(test_service_path, exist_ok=True)
+        calc_test_path = os.path.join(test_service_path, "CalculatorServiceTest.java")
+        with open(calc_test_path, "w") as file:
+            file.write(calc_test_str)
+
+#TODO
+def java_frc_sim_create(dir:str, name:str):
+    pass
+
+#TODO
+def java_frc_create(dir:str, name:str):
+    pass
+
+
+"""
+    Helper function to copy and paste template content into new file
+
+    Parameters:
+    template_path (str): Path to the template file
+    output_path (str): Path to the output file
+"""
+def copy_template(template_path, new_file_path):
+    try:
+        shutil.copy(template_path, new_file_path)
+    except FileNotFoundError:
+        print(f"Template file {template_path} not found")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    
+
+
+
+
 
 
     

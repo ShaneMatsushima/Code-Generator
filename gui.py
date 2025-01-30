@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-from modules.template_render.template_render import streamlit_create, flask_create, regular_python_create
+from modules.template_render.template_render import streamlit_create, flask_create, regular_python_create, java_create
 
 class ProjectSetupApp:
     def __init__(self, root):
@@ -44,9 +44,19 @@ class ProjectSetupApp:
             widget.destroy()
 
         selected_language = self.language_var.get()
-        if selected_language == "Python":
-            self.create_python_options()
-        # Additional languages can be handled here (Java, C, etc.)
+        match selected_language:
+            case "Python":
+                self.create_python_options()
+            
+            case "C":
+                self.create_c_options()
+            
+            case "C++":
+                self.create_cpp_options()
+            
+            case "Java":
+                self.create_java_options()
+        
 
     def create_python_options(self):
         ttk.Label(self.extra_option_frame, text="Python Project Type:").grid(row=0, column=0, padx=10, pady=5, sticky="w")
@@ -57,6 +67,19 @@ class ProjectSetupApp:
         python_project_type_combo['values'] = ("Flask", "Streamlit", "Regular Python Project")
         python_project_type_combo.grid(row=0, column=1, padx=10, pady=5)
         python_project_type_combo.bind("<<ComboboxSelected>>", self.update_python_project_options)
+
+    #TODO
+    def create_c_options(self):
+        ...
+
+    #TODO
+    def create_cpp_options(self):
+        ...
+
+    
+    def create_java_options(self):
+        self.java_project_test = tk.BooleanVar()
+        ttk.Checkbutton(self.extra_option_frame, text="Unit Tests", variable=self.java_project_test).grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
     def update_python_project_options(self, event=None):
         # Clear dynamic options
@@ -130,6 +153,11 @@ class ProjectSetupApp:
             # Create regular Python project
             regular_python_create(directory, project_name)
             messagebox.showinfo("Success", f"Regular Python project '{project_name}' created successfully!")
+
+        if language == "Java":
+            # Create Java project
+            java_create(directory, project_name, self.java_project_test)
+            messagebox.showinfo("Success", f"Java project '{project_name}' created successfully!")
         
 
 

@@ -1,6 +1,9 @@
 TODO
-- confine shell/batch creation to a function
-- add environment creation if selected
-- start java integration
-- start c integration
-- start c++ integratoin
+[] confine shell/batch creation to a function
+[] add environment creation if selected
+[] start java integration
+    [] sim code for FRC (subsystem based)
+    [] add code for FRC (subsystem based)
+    [x] regular subsytem (not using sim files)
+[] start c integration 
+[] start c++ integratoin

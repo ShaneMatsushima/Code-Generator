@@ -1,0 +1,20 @@
+# Java Starter Project
+
+This is a simple Java starter project using Maven. It includes:
+
+- A main application (`App.java`)
+- A basic service (`CalculatorService.java`)
+- A utility class (`StringUtils.java`)
+- JUnit tests
+
+## Requirements
+
+- Java 17+
+- Maven
+
+## How to Run
+
+1. Compile the project:
+
+   ```sh
+   mvn clean install
