@@ -3,6 +3,9 @@ TODO
 [] add environment creation if selected
 [] start java integration
     [] sim code for FRC (subsystem based)
+        [x] create roller sim code
+        [] create elevator sim code
+        [] implement specific motor type when creating sim file
     [] add code for FRC (subsystem based)
     [x] regular subsytem (not using sim files)
 [] start c integration 

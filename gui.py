@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-from modules.template_render.template_render import streamlit_create, flask_create, regular_python_create, java_create
+from modules.template_render.template_render import streamlit_create, flask_create, regular_python_create, java_create, java_frc_sim_create
 
 class ProjectSetupApp:
     def __init__(self, root):
@@ -56,7 +56,6 @@ class ProjectSetupApp:
             
             case "Java":
                 self.create_java_options()
-        
 
     def create_python_options(self):
         ttk.Label(self.extra_option_frame, text="Python Project Type:").grid(row=0, column=0, padx=10, pady=5, sticky="w")
@@ -68,6 +67,16 @@ class ProjectSetupApp:
         python_project_type_combo.grid(row=0, column=1, padx=10, pady=5)
         python_project_type_combo.bind("<<ComboboxSelected>>", self.update_python_project_options)
 
+    def create_java_options(self):
+        ttk.Label(self.extra_option_frame, text="Java Project Type:").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        self.java_project_type_var = tk.StringVar()
+        java_project_type_combo = ttk.Combobox(
+            self.extra_option_frame, textvariable=self.java_project_type_var, state="readonly"
+            )
+        java_project_type_combo['values'] = ("FRC Sim", "Java Reg", "FRC Reg")
+        java_project_type_combo.grid(row=0, column=1, padx=10, pady=5)
+        java_project_type_combo.bind("<<ComboboxSelected>>", self.update_java_project_options)
+
     #TODO
     def create_c_options(self):
         ...
@@ -76,10 +85,56 @@ class ProjectSetupApp:
     def create_cpp_options(self):
         ...
 
+    def create_java_frc_options(self):
+        ...
     
-    def create_java_options(self):
+    def create_java_frc_sim_options(self):
+        self.sim_sub_name = tk.StringVar()
+        ttk.Label(self.extra_option_frame, text="Sim Name:").grid(row=0, column=0, padx=10, pady=5)
+        ttk.Entry(self.extra_option_frame, textvariable=self.sim_sub_name).grid(row=0, column=1, padx=10, pady=5)
+
+        self.sim_sub_type = tk.StringVar()
+        ttk.Label(self.extra_option_frame, text="Type of Subsystem:").grid(row=1, column=0, padx=10, pady=5)
+        sim_sub_combo = ttk.Combobox(self.extra_option_frame, textvariable=self.sim_sub_type, state="readonly")
+        sim_sub_combo['values'] = ("Roller", "Elevator")
+        sim_sub_combo.grid(row=1, column=1, padx=10, pady=5)
+
+        self.sim_motor_type = tk.StringVar()
+        ttk.Label(self.extra_option_frame, text="Motor Type:").grid(row=2, column=0, padx=10, pady=5)
+        sim_motor_combo = ttk.Combobox(self.extra_option_frame, textvariable=self.sim_motor_type, state="readonly")
+        sim_motor_combo['values'] = ("TalonFX", "SparkMax")
+        sim_motor_combo.grid(row=2, column=1, padx=10, pady=5)
+
+        self.sim_can_id = tk.IntVar()
+        ttk.Label(self.extra_option_frame, text="Can ID").grid(row=3, column=0, padx=10, pady=5)
+        ttk.Entry(self.extra_option_frame, textvariable=self.sim_can_id).grid(row=3,column=1, padx=10, pady=5)
+
+        self.sim_current_limit = tk.IntVar()
+        ttk.Label(self.extra_option_frame, text="Current Limit").grid(row=4, column=0, padx=10, pady=5)
+        ttk.Entry(self.extra_option_frame, textvariable=self.sim_current_limit).grid(row=4,column=1, padx=10, pady=5)
+
+        self.sim_motor_reduction = tk.DoubleVar()
+        ttk.Label(self.extra_option_frame, text="Motor Reduction").grid(row=5, column=0, padx=10, pady=5)
+        ttk.Entry(self.extra_option_frame, textvariable=self.sim_motor_reduction).grid(row=5, column=1, padx=10, pady=5)
+
+
+
+    def create_java_reg_options(self):
         self.java_project_test = tk.BooleanVar()
         ttk.Checkbutton(self.extra_option_frame, text="Unit Tests", variable=self.java_project_test).grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+    def update_java_project_options(self, event=None):
+        for widget in self.extra_option_frame.winfo_children():
+            widget.destroy()
+
+        selected_project_type = self.java_project_type_var.get()
+        match selected_project_type:
+            case "FRC Sim":
+                self.create_java_frc_sim_options()
+            case "FRC Reg":
+                self.create_java_frc_options()
+            case "Java Reg":
+                self.create_java_reg_options()
 
     def update_python_project_options(self, event=None):
         # Clear dynamic options
@@ -154,12 +209,28 @@ class ProjectSetupApp:
             regular_python_create(directory, project_name)
             messagebox.showinfo("Success", f"Regular Python project '{project_name}' created successfully!")
 
-        if language == "Java":
+        if language == "Java" and self.java_project_type_var == "Java Reg":
             # Create Java project
             java_create(directory, project_name, self.java_project_test)
             messagebox.showinfo("Success", f"Java project '{project_name}' created successfully!")
-        
 
+        if language == "Java" and self.java_project_type_var.get() == "FRC Sim":
+
+            print("Generating FRC Sim Code")
+
+            success_message = f"Successfully generated sim code for {project_name}\nPlease Note: The generated folder with code should be dropped into the subsystem directory in FRC code."
+
+            sub_name = self.sim_sub_name.get()
+            sub_type = self.sim_sub_type.get()
+            sim_motor_type = self.sim_motor_type.get()
+            sim_can_id = self.sim_can_id.get()
+            sim_current_limit = self.sim_current_limit.get()
+            sim_motor_reduction = self.sim_motor_reduction.get()
+
+
+            # Create FRC Sim project
+            java_frc_sim_create(directory, sub_name, sub_type, sim_motor_type, sim_can_id, sim_current_limit, sim_motor_reduction)
+            messagebox.showinfo("Success", success_message)
 
 
 # Run the app

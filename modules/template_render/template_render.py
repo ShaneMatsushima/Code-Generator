@@ -377,9 +377,227 @@ def java_create(dir:str, proj_name:str, test_flag:bool):
         with open(calc_test_path, "w") as file:
             file.write(calc_test_str)
 
-#TODO
-def java_frc_sim_create(dir:str, name:str):
-    pass
+"""
+    Creates FRC Sim Subsystme project in the specified directory based on user inputs.
+    Creates Subsystem.java file.
+    Creates SubsystemIO.java file.
+    Creates SubsystemConstants.java file.
+    Creates SubsystemIOSim.java file.
+    Creates SubsystemIOSpark.java file if SparkMax Motor Controller is used.
+    Creates SubsystemIOTalonFX.java file if TalonFX Motor Controller is used. 
+
+    Parameters:
+        dir (str): Directory where the app file should be created.
+        sub_name (str): Name of subsystem
+        sub_type (str): type of subsystem
+        motor_type (str): type of motor controller used in the subsystem
+        can_id (int): Can ID for motor controller used in the subsystem
+        motor_reduction (int): Motor Reduction used on subsystem Motor
+        current_limit (int): 
+"""
+def java_frc_sim_create(dir:str, sub_name:str, sub_type:str, 
+                        motor_type:str, can_id:int, current_limit:int, motor_reduction:int):
+
+    # == Project Creation ==
+
+    # refactor name
+    sub_name = sub_name.lower().replace(' ', '_')
+    class_sub_name = sub_name.capitalize()
+
+    # create directory for whole subsytem
+    subsys_dir = os.path.join(dir, class_sub_name)
+    os.makedirs(subsys_dir, exist_ok=True)
+
+
+
+    match sub_type:
+        case "Roller":
+            
+            # == Roller.java Class Creation ==
+
+            # Construct the template file path two directories above the current script
+            script_dir = os.path.dirname(__file__)
+            template_path = os.path.join(script_dir, "..", "..", "templates", "frc_sim_templates", "roller", "roller.template")
+            template_path = os.path.abspath(template_path)
+
+            # Read the template file
+            try:
+                with open(template_path, "r") as file:
+                    template_content = file.read()
+            except FileNotFoundError:
+                raise FileNotFoundError(f"Template file not found at: {template_path}")
+            
+            template = Template(template_content)
+
+            # Render the template with user inputs
+            rendered_content = template.render(
+                class_sub_name = class_sub_name,
+                sub_name = sub_name
+            )
+
+            # Create file
+            file_name = f"{class_sub_name}.java"
+            file_path = os.path.join(subsys_dir, file_name)
+            with open(file_path, "w") as file:
+                file.write(rendered_content)
+
+            print(f"Generated {file_name}")
+
+            # == RollerConstants.java Class Creation ==
+
+            # Construct the template file path two directories above the current script
+            script_dir = os.path.dirname(__file__)
+            template_path = os.path.join(script_dir, "..", "..", "templates", "frc_sim_templates", "roller", "rollerConstants.template")
+            template_path = os.path.abspath(template_path)
+
+            # Read the template file
+            try:
+                with open(template_path, "r") as file:
+                    template_content = file.read()
+            except FileNotFoundError:
+                raise FileNotFoundError(f"Template file not found at: {template_path}")
+
+            template = Template(template_content)
+
+            rendered_content = template.render(
+                class_sub_name = class_sub_name,
+                sub_name = sub_name,
+                can_id = can_id,
+                motor_reduction = motor_reduction,
+                current_limit = current_limit
+            )
+
+            # Create file
+            file_name = f"{class_sub_name}Constants.java"
+            file_path = os.path.join(subsys_dir, file_name)
+            with open(file_path, "w") as file:
+                file.write(rendered_content)
+
+            print(f"Generated {file_name}")
+
+            # == RollerIO.java Class Creation ==
+
+            # Construct the template file path two directories above the current script
+            script_dir = os.path.dirname(__file__)
+            template_path = os.path.join(script_dir, "..", "..", "templates", "frc_sim_templates", "roller", "rollerIO.template")
+            template_path = os.path.abspath(template_path)
+
+            # Read the template file
+            try:
+                with open(template_path, "r") as file:
+                    template_content = file.read()
+            except FileNotFoundError:
+                raise FileNotFoundError(f"Template file not found at: {template_path}")
+
+            template = Template(template_content)
+
+            rendered_content = template.render(
+                class_sub_name = class_sub_name
+            )
+
+            # Create file
+            file_name = f"{class_sub_name}IO.java"
+            file_path = os.path.join(subsys_dir, file_name)
+            with open(file_path, "w") as file:
+                file.write(rendered_content)
+
+            print(f"Generated {file_name}")
+
+            # == RollerIOSim.java Class Creation
+            # Construct the template file path two directories above the current script
+            script_dir = os.path.dirname(__file__)
+            template_path = os.path.join(script_dir, "..", "..", "templates", "frc_sim_templates", "roller", "rollerIOSim.template")
+            template_path = os.path.abspath(template_path)
+
+            # Read the template file
+            try:
+                with open(template_path, "r") as file:
+                    template_content = file.read()
+            except FileNotFoundError:
+                raise FileNotFoundError(f"Template file not found at: {template_path}")
+
+            template = Template(template_content)
+
+            rendered_content = template.render(
+                class_sub_name = class_sub_name
+            )
+
+            # Create file
+            file_name = f"{class_sub_name}IOSim.java"
+            file_path = os.path.join(subsys_dir, file_name)
+            with open(file_path, "w") as file:
+                file.write(rendered_content)
+
+            print(f"Generated {file_name}")
+
+            match motor_type:
+                case "TalonFX":
+                    # == RollerIOTalonFX.java Class Creation ==
+
+                    # Construct the template file path two directories above the current script
+                    script_dir = os.path.dirname(__file__)
+                    template_path = os.path.join(script_dir, "..", "..", "templates", "frc_sim_templates", "roller", "rollerIOTalon.template")
+                    template_path = os.path.abspath(template_path)
+
+                    # Read the template file
+                    try:
+                        with open(template_path, "r") as file:
+                            template_content = file.read()
+                    except FileNotFoundError:
+                        raise FileNotFoundError(f"Template file not found at: {template_path}")
+
+                    template = Template(template_content)
+
+                    rendered_content = template.render(
+                        class_sub_name = class_sub_name,
+                        sub_name = sub_name
+                    )
+
+                    # Create file
+                    file_name = f"{sub_name}IOTalonFX.java"
+                    file_path = os.path.join(subsys_dir, file_name)
+                    with open(file_path, "w") as file:
+                        file.write(rendered_content)
+
+                    print(f"Generated {file_name}")
+
+                case "SparkMax":
+                    # == RollerIOSpark.java Class Creation ==
+
+                    # Construct the template file path two directories above the current script
+                    script_dir = os.path.dirname(__file__)
+                    template_path = os.path.join(script_dir, "..", "..", "templates", "frc_sim_templates", "roller", "rollerIOSpark.template")
+                    template_path = os.path.abspath(template_path)
+
+                    # Read the template file
+                    try:
+                        with open(template_path, "r") as file:
+                            template_content = file.read()
+                    except FileNotFoundError:
+                        raise FileNotFoundError(f"Template file not found at: {template_path}")
+
+                    template = Template(template_content)
+
+                    rendered_content = template.render(
+                        class_sub_name = class_sub_name,
+                        sub_name = sub_name
+                    )
+
+                    # Create file
+                    file_name = f"{sub_name}IOSpark.java"
+                    file_path = os.path.join(subsys_dir, file_name)
+                    with open(file_path, "w") as file:
+                        file.write(rendered_content)
+
+                    print(f"Generated {file_name}")
+
+            
+        case "Elevator":
+            match motor_type:
+                case "TalonFX":
+                    ...
+                case "SparkMax":
+                    ...
 
 #TODO
 def java_frc_create(dir:str, name:str):
