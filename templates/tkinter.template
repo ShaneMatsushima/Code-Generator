@@ -1,0 +1,48 @@
+import tkinter as tk
+from tkinter import ttk
+
+class {{ app_name }}App:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("{{ window_title }}")
+        self.root.geometry("{{ window_size }}")
+
+        # Create a frame for the input fields
+        self.input_frame = ttk.Frame(self.root)
+        self.input_frame.pack(padx=10, pady=10, fill=tk.X)
+
+        # Dictionary to store user inputs
+        self.user_inputs = {}
+
+        # Dynamically create input fields based on user inputs
+        {% for input_field in input_fields %}
+        self.create_input_field("{{ input_field.label }}", "{{ input_field.variable_name }}")
+        {% endfor %}
+
+        # Create a submit button
+        self.submit_button = ttk.Button(self.root, text="Submit", command=self.on_submit)
+        self.submit_button.pack(pady=10)
+
+    def create_input_field(self, label_text, variable_name):
+        # Create a label
+        label = ttk.Label(self.input_frame, text=label_text)
+        label.pack(anchor=tk.W)
+
+        # Create an entry widget
+        entry = ttk.Entry(self.input_frame)
+        entry.pack(fill=tk.X, pady=5)
+
+        # Store the entry widget in the dictionary
+        self.user_inputs[variable_name] = entry
+
+    def on_submit(self):
+        # Retrieve and print user inputs
+        {% for input_field in input_fields %}
+        {{ input_field.variable_name }} = self.user_inputs["{{ input_field.variable_name }}"].get()
+        print("{{ input_field.label }}: ", {{ input_field.variable_name }})
+        {% endfor %}
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = {{ app_name }}App(root)
+    root.mainloop()
