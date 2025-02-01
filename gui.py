@@ -218,7 +218,7 @@ class ProjectSetupApp:
 
             print("Generating FRC Sim Code")
 
-            success_message = f"Successfully generated sim code for {project_name}\nPlease Note: The generated folder with code should be dropped into the subsystem directory in FRC code."
+            success_message = f"Successfully generated sim code for {project_name}\n Please Note: The generated folder with code should be dropped into the subsystem directory in FRC code"
 
             sub_name = self.sim_sub_name.get()
             sub_type = self.sim_sub_type.get()

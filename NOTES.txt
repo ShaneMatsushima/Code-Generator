@@ -1,6 +1,7 @@
 TODO
 [] confine shell/batch creation to a function
 [] add environment creation if selected
+[] add tkinter for python option
 [] start java integration
     [] sim code for FRC (subsystem based)
         [x] create roller sim code
@@ -10,3 +11,35 @@ TODO
     [x] regular subsytem (not using sim files)
 [] start c integration 
 [] start c++ integratoin
+
+
+NOTES:
+For Tkinter user input (optional following data):
+    Basic Window Settings:
+        Title: Name of the application window
+        Size: Width × Height (e.g., 400x300)
+        Resizable: Boolean for whether the window is resizable
+        Background Color: Hex or color name for window background
+    Widgets & Layout:
+        Labels: Text, font, size, alignment
+        Buttons: Text, action (e.g., close app, show message)
+        Entry Fields: Placeholder text, variable binding
+        Text Box: Multi-line text input
+        Checkboxes: Label, variable state
+        Radio Buttons: Grouped choices, default selection
+        Dropdown (Combobox): Options, default value
+        Listbox: Selectable items
+        Canvas: Drawing support
+        Frames & Paned Windows: For organizing layouts
+        Event Handling & Callbacks:
+        Button Actions: Predefined functions (e.g., print to console, exit app)
+        Keyboard Shortcuts: Custom key bindings
+        Mouse Click Events: Assign actions to clicks
+        Menu Commands: Options like File → Open, Save, Exit
+    Additional Features:
+        Theming: Use of ttk themes
+        Grid vs. Pack vs. Place: Layout choice
+        Default State Management: Pre-set values for widgets
+        File Handling: Save/load options
+        Database Integration: SQLite support
+        Logging & Debugging: Console print/debugging support
